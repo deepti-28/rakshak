@@ -5,76 +5,124 @@ void main() {
 }
 
 class RakshakApp extends StatelessWidget {
-  const RakshakApp({super.key});
+  const RakshakApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
+      home: const SplashScreen(),
     );
   }
 }
 
 class SplashScreen extends StatelessWidget {
-  const SplashScreen({super.key});
+  const SplashScreen({Key? key}) : super(key: key);
+
+  static const Color darkGreen = Color(0xFF145A32); // same as "Rakshak"
+  static const Color logoBlue = Color(0xFF2052A6);  // sample blue from your logo
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFE8F5E9), // Very light green
       body: Stack(
         children: [
-          // Environment background images (adjust asset names/positions as needed)
-          Positioned(
-            top: 60,
-            left: 20,
-            child: Opacity(
-              opacity: 0.2,
-              child: Image.asset(
-                'assets/tree.png', // Example asset
-                width: 70,
-              ),
+          Positioned.fill(
+            child: Image.asset(
+              'assets/nature.png',
+              fit: BoxFit.cover,
             ),
           ),
-          Positioned(
-            bottom: 50,
-            right: 18,
-            child: Opacity(
-              opacity: 0.16,
-              child: Image.asset(
-                'assets/mountains.png', // Example asset
-                width: 95,
-              ),
-            ),
-          ),
-          Center(
+          SafeArea(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                const SizedBox(height: 48),
+                // Logo
                 Image.asset(
                   'assets/logo.png',
-                  width: 140,
-                  height: 140,
+                  width: 130,
+                  height: 130,
                 ),
-                const SizedBox(height: 18),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF001F4D), // Navy blue
-                    padding: const EdgeInsets.symmetric(horizontal: 44, vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(28),
+                const SizedBox(height: 24),
+                // Welcome texts
+                Column(
+                  children: const [
+                    Text(
+                      "Welcome to",
+                      style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        color: darkGreen, // Now same dark green
+                        shadows: [
+                          Shadow(
+                            color: Colors.black26,
+                            offset: Offset(1, 1),
+                            blurRadius: 4,
+                          ),
+                        ],
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    elevation: 4,
+                    SizedBox(height: 6),
+                    Text(
+                      "Rakshak",
+                      style: TextStyle(
+                        fontSize: 36,
+                        fontWeight: FontWeight.bold,
+                        color: darkGreen,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black26,
+                            offset: Offset(1, 1),
+                            blurRadius: 4,
+                          ),
+                        ],
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                // Tagline in blue
+                const Text(
+                  "Your Adventure, Our Compass",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontStyle: FontStyle.italic,
+                    color: logoBlue, // Blue as in logo
+                    shadows: [
+                      Shadow(
+                        color: Colors.black38,
+                        offset: Offset(1, 1),
+                        blurRadius: 6,
+                      ),
+                    ],
                   ),
-                  onPressed: () {
-                    // Navigation logic here
-                  },
-                  child: const Text(
-                    'Get Started',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+                  textAlign: TextAlign.center,
+                ),
+                const Spacer(),
+                Padding(
+                  padding:
+                      const EdgeInsets.only(left: 18, right: 18, bottom: 60),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 54,
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF267442),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(32),
+                        ),
+                      ),
+                      child: const Text(
+                        'Get started',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold
+                        ),
+                      ),
                     ),
                   ),
                 ),
