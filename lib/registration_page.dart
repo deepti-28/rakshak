@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dashboard.dart'; // Import dashboard here
+import 'dashboard.dart';
 
 class ItineraryEntry {
   TextEditingController placeController = TextEditingController();
@@ -30,7 +30,6 @@ class _SinglePageRegistrationState extends State<SinglePageRegistration> {
   final List<GlobalKey> _sectionKeys = List.generate(5, (_) => GlobalKey());
   final List<GlobalKey<FormState>> _formKeys = List.generate(5, (_) => GlobalKey<FormState>());
 
-  // KYC Controllers
   final TextEditingController aadhaarController = TextEditingController();
   final TextEditingController passportController = TextEditingController();
   final TextEditingController nameController = TextEditingController();
@@ -38,15 +37,12 @@ class _SinglePageRegistrationState extends State<SinglePageRegistration> {
   String? gender;
   final TextEditingController ageController = TextEditingController();
 
-  // Dynamic lists for itineraries and emergency contacts
   List<ItineraryEntry> itineraries = [ItineraryEntry()];
   List<EmergencyContact> emergencyContacts = [EmergencyContact()];
 
-  // Health info
   final TextEditingController allergiesController = TextEditingController();
   final TextEditingController medicalConditionController = TextEditingController();
 
-  // Language & Consent
   String? selectedLanguage;
   bool privacyConsent = false;
   bool locationConsent = false;
@@ -74,7 +70,6 @@ class _SinglePageRegistrationState extends State<SinglePageRegistration> {
 
     allergiesController.dispose();
     medicalConditionController.dispose();
-
     super.dispose();
   }
 
@@ -106,78 +101,35 @@ class _SinglePageRegistrationState extends State<SinglePageRegistration> {
   void onNext() {
     if (_formKeys[_currentStep].currentState?.validate() ?? false) {
       if (_currentStep < totalSteps - 1) {
-        _currentStep++;
+        setState(() {
+          _currentStep++;
+        });
         scrollToSection(_currentStep);
-        setState(() {});
-      } else {
-        if (!privacyConsent) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please accept the privacy policy')));
-          return;
-        }
-        submitForm();
       }
     }
   }
 
   void onBack() {
     if (_currentStep > 0) {
-      _currentStep--;
+      setState(() {
+        _currentStep--;
+      });
       scrollToSection(_currentStep);
-      setState(() {});
     }
   }
 
-  void submitForm() {
-    final registrationData = {
-      "aadhaar": aadhaarController.text.trim(),
-      "passport": passportController.text.trim(),
-      "name": nameController.text.trim(),
-      "nationality": nationalityController.text.trim(),
-      "gender": gender,
-      "age": ageController.text.trim(),
-      "itineraries": itineraries.map((i) {
-        return {
-          "place": i.placeController.text.trim(),
-          "arrivalDate": i.arrivalDate?.toIso8601String(),
-          "departureDate": i.departureDate?.toIso8601String(),
-          "hotel": i.hotelController.text.trim(),
-        };
-      }).toList(),
-      "emergencyContacts": emergencyContacts.map((c) {
-        return {
-          "name": c.nameController.text.trim(),
-          "relation": c.relationController.text.trim(),
-          "phone": c.phoneController.text.trim(),
-        };
-      }).toList(),
-      "health": {
-        "allergies": allergiesController.text.trim(),
-        "medicalConditions": medicalConditionController.text.trim(),
-      },
-      "language": selectedLanguage,
-      "consent": {
-        "privacy": privacyConsent,
-        "location": locationConsent,
-      },
-    };
-    print("Submitting registration data: $registrationData");
-
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Registration Successful'),
-        content: const Text('Your details have been submitted.'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (_) => DashboardPage(userName: nameController.text.trim())),
-              );
-            },
-            child: const Text('OK'),
-          ),
-        ],
+  void onRegister() {
+    if (!_formKeys[_currentStep].currentState!.validate()) return;
+    if (!privacyConsent) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please accept the privacy policy')),
+      );
+      return;
+    }
+    // Navigate directly to DashboardPage, pass name
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (_) => DashboardPage(userName: nameController.text.trim()),
       ),
     );
   }
@@ -377,14 +329,13 @@ class _SinglePageRegistrationState extends State<SinglePageRegistration> {
                     children: List.generate(totalSteps, buildStepIndicator),
                   ),
                   const SizedBox(width: 18),
-                  // Form content
                   Expanded(
                     child: SingleChildScrollView(
                       controller: _scrollController,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // KYC form
+                          // KYC Section
                           Container(
                             key: _sectionKeys[0],
                             padding: const EdgeInsets.only(bottom: 30),
@@ -450,10 +401,11 @@ class _SinglePageRegistrationState extends State<SinglePageRegistration> {
                                           child: const Text('Back'),
                                         ),
                                       const Spacer(),
-                                      ElevatedButton(
-                                        onPressed: onNext,
-                                        child: Text(_currentStep == totalSteps - 1 ? 'Register' : 'Next'),
-                                      ),
+                                      if (_currentStep < totalSteps - 1)
+                                        ElevatedButton(
+                                          onPressed: onNext,
+                                          child: const Text('Next'),
+                                        ),
                                     ],
                                   ),
                                 ],
@@ -461,7 +413,7 @@ class _SinglePageRegistrationState extends State<SinglePageRegistration> {
                             ),
                           ),
 
-                          // Itinerary form
+                          // Itinerary Section
                           Container(
                             key: _sectionKeys[1],
                             padding: const EdgeInsets.only(bottom: 30),
@@ -482,10 +434,11 @@ class _SinglePageRegistrationState extends State<SinglePageRegistration> {
                                           child: const Text('Back'),
                                         ),
                                       const Spacer(),
-                                      ElevatedButton(
-                                        onPressed: onNext,
-                                        child: Text(_currentStep == totalSteps - 1 ? 'Register' : 'Next'),
-                                      ),
+                                      if (_currentStep < totalSteps - 1)
+                                        ElevatedButton(
+                                          onPressed: onNext,
+                                          child: const Text('Next'),
+                                        ),
                                     ],
                                   ),
                                 ],
@@ -493,7 +446,7 @@ class _SinglePageRegistrationState extends State<SinglePageRegistration> {
                             ),
                           ),
 
-                          // Emergency contact form
+                          // Emergency Contact Section
                           Container(
                             key: _sectionKeys[2],
                             padding: const EdgeInsets.only(bottom: 30),
@@ -514,10 +467,11 @@ class _SinglePageRegistrationState extends State<SinglePageRegistration> {
                                           child: const Text('Back'),
                                         ),
                                       const Spacer(),
-                                      ElevatedButton(
-                                        onPressed: onNext,
-                                        child: Text(_currentStep == totalSteps - 1 ? 'Register' : 'Next'),
-                                      ),
+                                      if (_currentStep < totalSteps - 1)
+                                        ElevatedButton(
+                                          onPressed: onNext,
+                                          child: const Text('Next'),
+                                        ),
                                     ],
                                   ),
                                 ],
@@ -525,7 +479,7 @@ class _SinglePageRegistrationState extends State<SinglePageRegistration> {
                             ),
                           ),
 
-                          // Health info form
+                          // Health Info Section
                           Container(
                             key: _sectionKeys[3],
                             padding: const EdgeInsets.only(bottom: 30),
@@ -553,10 +507,11 @@ class _SinglePageRegistrationState extends State<SinglePageRegistration> {
                                           child: const Text('Back'),
                                         ),
                                       const Spacer(),
-                                      ElevatedButton(
-                                        onPressed: onNext,
-                                        child: Text(_currentStep == totalSteps - 1 ? 'Register' : 'Next'),
-                                      ),
+                                      if (_currentStep < totalSteps - 1)
+                                        ElevatedButton(
+                                          onPressed: onNext,
+                                          child: const Text('Next'),
+                                        ),
                                     ],
                                   ),
                                 ],
@@ -564,7 +519,7 @@ class _SinglePageRegistrationState extends State<SinglePageRegistration> {
                             ),
                           ),
 
-                          // Language & consent form
+                          // Language and Consent Section
                           Container(
                             key: _sectionKeys[4],
                             padding: const EdgeInsets.only(bottom: 30),
@@ -604,8 +559,8 @@ class _SinglePageRegistrationState extends State<SinglePageRegistration> {
                                         ),
                                       const Spacer(),
                                       ElevatedButton(
-                                        onPressed: onNext,
-                                        child: Text(_currentStep == totalSteps - 1 ? 'Register' : 'Next'),
+                                        onPressed: onRegister,
+                                        child: const Text('Register'),
                                       ),
                                     ],
                                   ),
