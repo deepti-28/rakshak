@@ -1,3 +1,4 @@
+import 'sos_alert_page.dart';
 import 'package:flutter/material.dart';
 
 class DashboardPage extends StatelessWidget {
@@ -77,7 +78,9 @@ class DashboardPage extends StatelessWidget {
                           label: 'Panic Button',
                           color: Colors.redAccent,
                           onTap: () {
-                            // Implement panic button action
+                            Navigator.of(context).push(
+                              MaterialPageRoute(builder: (_) => SosAlertPage()),
+                            );
                           },
                         ),
                         _dashboardButton(
