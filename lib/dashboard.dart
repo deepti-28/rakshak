@@ -1,14 +1,16 @@
-import 'sos_alert_page.dart';
 import 'package:flutter/material.dart';
+import 'sos_alert_page.dart';
+import 'itinerary.dart';
 
 class DashboardPage extends StatelessWidget {
   final String userName;
+  final List<String> userItinerary;
 
-  const DashboardPage({super.key, required this.userName});
+  const DashboardPage({super.key, required this.userName, required this.userItinerary});
 
   @override
   Widget build(BuildContext context) {
-    const double score = 78; // Dummy static safety score
+    const double score = 78; // Dummy safety score
 
     return Scaffold(
       body: Stack(
@@ -27,15 +29,19 @@ class DashboardPage extends StatelessWidget {
                   Text(
                     'Welcome, $userName',
                     style: const TextStyle(
-                      fontSize: 24,
+                      fontSize: 32,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      shadows: [Shadow(color: Colors.black54, blurRadius: 4)],
+                      color: Color(0xFF145A32),
+                      shadows: [
+                        Shadow(
+                          color: Colors.black26,
+                          offset: Offset(1, 1),
+                          blurRadius: 4,
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 30),
-
-                  // Score Display
                   Center(
                     child: Stack(
                       alignment: Alignment.center,
@@ -52,21 +58,26 @@ class DashboardPage extends StatelessWidget {
                         ),
                         Text(
                           '$score%',
-                          style: const TextStyle(fontSize: 42, fontWeight: FontWeight.bold, color: Colors.white),
+                          style: const TextStyle(
+                            fontSize: 42,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF145A32),
+                          ),
                         ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 30),
-
                   const Text(
                     'Your Tourist Safety Score',
-                    style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.w500),
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Color(0xFF145A32),
+                      fontWeight: FontWeight.w500,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 45),
-
-                  // Dashboard buttons
                   Expanded(
                     child: GridView.count(
                       crossAxisCount: 2,
@@ -88,7 +99,7 @@ class DashboardPage extends StatelessWidget {
                           label: 'Alerts',
                           color: Colors.orangeAccent,
                           onTap: () {
-                            // View alert history
+                            // Implement Alerts Page
                           },
                         ),
                         _dashboardButton(
@@ -96,7 +107,14 @@ class DashboardPage extends StatelessWidget {
                           label: 'Itinerary',
                           color: Colors.blueAccent,
                           onTap: () {
-                            // Show trip itinerary
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => ItineraryPage(
+                                  places: userItinerary,
+                                ),
+                              ),
+                            );
                           },
                         ),
                         _dashboardButton(
@@ -104,7 +122,7 @@ class DashboardPage extends StatelessWidget {
                           label: 'Profile',
                           color: Colors.purpleAccent,
                           onTap: () {
-                            // User profile & info
+                            // Implement Profile Page
                           },
                         ),
                         _dashboardButton(
@@ -112,7 +130,7 @@ class DashboardPage extends StatelessWidget {
                           label: 'Settings',
                           color: Colors.tealAccent,
                           onTap: () {
-                            // App preferences & language
+                            // Implement Settings Page
                           },
                         ),
                       ],

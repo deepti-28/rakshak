@@ -15,7 +15,9 @@ class EmergencyContact {
 }
 
 class SinglePageRegistration extends StatefulWidget {
-  const SinglePageRegistration({super.key});
+  final void Function(String userName, List<String> itinerary) onRegistered;
+
+  const SinglePageRegistration({super.key, required this.onRegistered});
 
   @override
   State<SinglePageRegistration> createState() => _SinglePageRegistrationState();
@@ -126,11 +128,10 @@ class _SinglePageRegistrationState extends State<SinglePageRegistration> {
       );
       return;
     }
-    // Navigate directly to DashboardPage, pass name
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (_) => DashboardPage(userName: nameController.text.trim()),
-      ),
+    // Call the onRegistered callback with name and itinerary list
+    widget.onRegistered(
+      nameController.text.trim(),
+      itineraries.map((e) => e.placeController.text).toList(),
     );
   }
 
